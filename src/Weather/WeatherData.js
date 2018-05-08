@@ -1,0 +1,117 @@
+import React, { Component } from 'react';
+import ForecastData from "./ForecastData";
+
+class WeatherData extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: this.props.id,
+      description: '',
+      temp: '',
+      humidity: '',
+      pressure: '',
+      sunrise: '',
+      sunset: '',
+      windSpeed: '',
+      icon: '',
+    };
+  }
+
+  fetchData(){
+    const url = `https://api.openweathermap.org/data/2.5/weather?id=${this.state.id}&APPID=d8de80775b6f0a42c495a503c9f01ac4`;
+    fetch(url, {
+    })
+      .then(response => {
+        if(response.status === 200) return response.json();
+        else throw new Error("Something went wrong while fetching data");
+      })
+      .then(data => {
+        this.capatilizeFirstLetter(data.weather[0].description);
+        this.convertTemperatureF(data.main.temp);
+        this.setState({humidity: data.main.humidity});
+        this.convertSun("sunrise", data.sys.sunrise);
+        this.convertSun("sunset", data.sys.sunset);
+        this.convertWindMPH(data.wind.speed);
+        this.setState({icon: data.weather[0].icon})
+    }).catch((error) => {
+        console.log(error)
+    });
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.name !== this.props.name) {
+      this.setState({ id: nextProps.id }, function () {
+        this.fetchData();
+    });
+    }
+  }
+
+  convertSun(sunName, sunPos){
+    let myDate = new Date( sunPos *1000);
+    myDate.toLocaleDateString();
+    let time = myDate.getHours() + ":" + myDate.getMinutes();
+    if(sunName === 'sunrise'){
+      time = time + " AM";
+      this.setState({sunrise: time});
+    }else{
+      time = time + " PM";
+      this.setState({sunset: time});
+    }
+  }
+
+  capatilizeFirstLetter(desc){
+    let capDesc = desc.charAt(0).toUpperCase() + desc.substr(1);
+    this.setState({description: capDesc});
+  }
+
+  convertWindMPH(speed){
+    let windSpeed = (speed * 2.2369);
+    this.setState({windSpeed: Math.round(windSpeed)});
+  }
+
+  convertTemperatureF(temp){
+    let fahrenheit = ((temp * (9/5)) - 459.67);
+    this.setState({temp: Math.round(fahrenheit)});
+  }
+
+  render() {
+    const image = `https://openweathermap.org/img/w/${this.state.icon}.png`;
+    return (
+      <div>
+      <div class="slds-grid slds-wrap" style={{ paddingTop: '1em'}}>
+        <div class="slds-col slds-size_1-of-4"/>
+        <div class="slds-col slds-size_1-of-4">
+          <h3 className='weather__temp'>
+            <img className = "weather__logo" src={image} />
+            {this.state.temp} °F
+          </h3>
+          <div>
+            <b>{this.state.description}</b>
+          </div>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+          <div>
+            <b>Humidity</b> = {this.state.humidity}% <br/>
+            <b>Wind</b> = {this.state.windSpeed} mph <br/>
+            <b>Sunrise</b> = {this.state.sunrise} <br/>
+            <b>Sunset</b> = {this.state.sunset}
+          </div>
+        </div>
+        <div class="slds-col slds-size_1-of-4"/>
+      </div>
+        <ForecastData
+          id={this.state.id}
+        />
+      </div>
+    );
+  }
+
+
+
+}
+
+export default WeatherData;
