@@ -1,5 +1,11 @@
+/**
+ * Home page for the application
+ * Each city's weather is displayed in a carousel component
+ * Loads first Milwaukee as the default city
+ */
+
 import React, { Component } from 'react';
-import CarouselComp from "../CarouselComp";
+import CarouselComp from "./CarouselComp";
 import Header from "./Header";
 
 const MILWAUKEE = 5263058;
@@ -33,6 +39,7 @@ class Home extends Component {
     this.toggleCarouselFour = this.toggleCarouselFour.bind(this);
   }
 
+  // Toggles the different states for making the indicators active and inactive, and passes on the selected city's ID
   toggleCarouselOne() {
     this.setState({ tabIndexOne: 0, tabIndexTwo: -1, tabIndexThree: -1, tabIndexFour: -1,
       tabSelectedOne: true, tabSelectedTwo: false, tabSelectedThree: false, tabSelectedFour: false,
@@ -138,7 +145,6 @@ class Home extends Component {
       </div>
     );
   }
-
 }
 
 export default Home;

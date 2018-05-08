@@ -1,3 +1,7 @@
+/**
+ * Displays current weather data for the correlating city
+ */
+
 import React, { Component } from 'react';
 import ForecastData from "./ForecastData";
 
@@ -17,6 +21,7 @@ class WeatherData extends Component {
     };
   }
 
+  // Fetches the current weather from the Weather API
   fetchData(){
     const url = `https://api.openweathermap.org/data/2.5/weather?id=${this.state.id}&APPID=d8de80775b6f0a42c495a503c9f01ac4`;
     fetch(url, {
@@ -26,7 +31,7 @@ class WeatherData extends Component {
         else throw new Error("Something went wrong while fetching data");
       })
       .then(data => {
-        this.capatilizeFirstLetter(data.weather[0].description);
+        this.capitalizeFirstLetter(data.weather[0].description);
         this.convertTemperatureF(data.main.temp);
         this.setState({humidity: data.main.humidity});
         this.convertSun("sunrise", data.sys.sunrise);
@@ -38,10 +43,12 @@ class WeatherData extends Component {
     });
   }
 
+  // Fetch data as soon as this component is initially created
   componentDidMount() {
     this.fetchData();
   }
 
+  // Fetch new data anytime the props change
   componentWillReceiveProps(nextProps) {
     if (nextProps.name !== this.props.name) {
       this.setState({ id: nextProps.id }, function () {
@@ -50,29 +57,38 @@ class WeatherData extends Component {
     }
   }
 
+  // Convert sunrise and sunset unix time into standard time
   convertSun(sunName, sunPos){
     let myDate = new Date( sunPos *1000);
+    let hours = myDate.getHours();
+    let minutes = myDate.getMinutes();
+    if(minutes < 10){
+      minutes = "0" + minutes;
+    }
+    let time;
     myDate.toLocaleDateString();
-    let time = myDate.getHours() + ":" + myDate.getMinutes();
     if(sunName === 'sunrise'){
-      time = time + " AM";
+      time = hours + ":" + minutes + " AM";
       this.setState({sunrise: time});
     }else{
-      time = time + " PM";
+      time = (hours - 12) + ":" + minutes + " PM";
       this.setState({sunset: time});
     }
   }
 
-  capatilizeFirstLetter(desc){
+  // Capitalize first letter of the description
+  capitalizeFirstLetter(desc){
     let capDesc = desc.charAt(0).toUpperCase() + desc.substr(1);
     this.setState({description: capDesc});
   }
 
+  // Convert wind m/s to mph
   convertWindMPH(speed){
     let windSpeed = (speed * 2.2369);
     this.setState({windSpeed: Math.round(windSpeed)});
   }
 
+  // Convert temp in Kelvin to Fahrenheit
   convertTemperatureF(temp){
     let fahrenheit = ((temp * (9/5)) - 459.67);
     this.setState({temp: Math.round(fahrenheit)});
@@ -109,9 +125,6 @@ class WeatherData extends Component {
       </div>
     );
   }
-
-
-
 }
 
 export default WeatherData;

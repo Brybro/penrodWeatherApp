@@ -1,6 +1,10 @@
-import React, { Component } from 'react';
-import WeatherData from "./Weather/WeatherData";
+/**
+ * Component that acts as the container for displaying all the weather data
+ * Links with the action indicators and switches city data depending on which indicator is clicked on
+ */
 
+import React, { Component } from 'react';
+import WeatherData from "../Weather/WeatherData";
 
 class CarouselComp extends Component {
   constructor(props) {
@@ -10,7 +14,6 @@ class CarouselComp extends Component {
   }
 
   render() {
-
     return (
       <div id="content-id-01" class="slds-carousel__panel" role="tabpanel" aria-hidden='false'>
         <a class="slds-carousel__panel-action slds-text-link_reset" tabIndex="0">
@@ -25,7 +28,6 @@ class CarouselComp extends Component {
       </div>
     )
   }
-
 }
 
 export default CarouselComp;

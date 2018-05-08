@@ -1,3 +1,7 @@
+/**
+ * Component that displays the four day forecast
+ */
+
 import React, { Component } from 'react';
 
 class ForecastDays extends Component {
@@ -5,6 +9,7 @@ class ForecastDays extends Component {
   render() {
     return (
         <div>
+          <h2>{this.props.date}</h2>
           <h3 style={{ fontSize: '2.5em'}}>
             <img className = "weather__logo" src={`https://openweathermap.org/img/w/${this.props.icon}.png`} />
             {this.props.temp} °F
